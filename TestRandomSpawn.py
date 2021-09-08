@@ -23,13 +23,16 @@ house_width = 20
 
 
 
-randX = random.randint(x, x+100)
-randZ = random .randint(z, z+100)
-
-mc.postToChat(randX)
-mc.postToChat(randZ)
 
 
-house1 = House(randX, y, randZ, randX + house_length, y + house_height, randZ + house_width, oak)
+
+
+for i in range(3):
+    randX = random.randint(x-100, x+100)
+    randZ = random .randint(z-100, z+100)
+    mc.postToChat(randX)
+    mc.postToChat(randZ)
+
+    house1 = House(randX, y, randZ, randX + house_length, y + house_height, randZ + house_width, oak)
 
                     
