@@ -25,9 +25,13 @@ def create_house(length=8, width=10, height=5):
                     mc.setBlock(x + i, y + k, z + j, air)
 
 
-house_length = 20
+house_length = 15
 house_height = 5
-house_width = 20
+house_width = 15
+
+mc.postToChat(x)
+mc.postToChat(y)
+mc.postToChat(z)
 
 house1 = House(x, y, z, x + house_length, y + house_height, z + house_width, oak)
 
