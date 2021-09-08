@@ -4,7 +4,8 @@ from House import House
 mc = Minecraft.create()
 x, y, z = mc.player.getPos()
 
-brick = 46
+tnt = 46
+brick = 45
 air = 0
 oak = 5
 glass = 20
@@ -26,13 +27,9 @@ def create_house(length=8, width=10, height=5):
 
 
 house_length = 15
-house_height = 5
-house_width = 15
+house_height = 6
+house_width = 20
 
-mc.postToChat(x)
-mc.postToChat(y)
-mc.postToChat(z)
-
-house1 = House(x, y, z, x + house_length, y + house_height, z + house_width, oak)
+house1 = House('south', x, y, z, house_width, house_height, house_length, oak, brick)
 
 # create_house()
