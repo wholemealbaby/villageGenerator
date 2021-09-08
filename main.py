@@ -14,7 +14,7 @@ class Room:
         height = 5                          # y axis
         length = random.randint(5, 12)      # z axis
         wallMaterial = WALL_MATERIALS[random.randint(0, len(WALL_MATERIALS)-1)]
-        floorMaterial = FLOOR_MATERIALS[random.randint(0, len(WA_MATERIALS) - 1)]
+        floorMaterial = FLOOR_MATERIALS[random.randint(0, len(WALL_MATERIALS) - 1)]
 
         # LOCATION
         x0 = x - int(width/2)
