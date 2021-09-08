@@ -19,6 +19,7 @@ class House:
         mc.setBlocks(x_lower, y_lower, z_lower, x_upper, y_upper, z_upper, block_id)
         # Hollow out the inside
         mc.setBlocks(x_lower + 1, y_lower + 1, z_lower + 1, x_upper - 1, y_upper - 1, z_upper - 1, 0)
+        #add a different floor material
 
         # Add front door of house (with coordinate selection)
         door_width = 4
