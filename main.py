@@ -136,7 +136,7 @@ def cut_plot():
     player.setPos(ref_x, ref_y+1-y_offset, ref_z)
 
 
-
+#not functional
 def stop_waterfalls(ref_block):
     boundary_ref_block = [(ref_block[0]-1), ref_block[1]+1, (ref_block[2]-1)]
     boundary_ref_x = boundary_ref_block[0]
