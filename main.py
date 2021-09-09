@@ -1,5 +1,6 @@
 from mcpi.minecraft import Minecraft
-import random
+from random import randint
+import numpy as np
 
 mc = Minecraft.create()
 player = mc.player
@@ -7,47 +8,87 @@ player = mc.player
 WALL_MATERIALS = [5, 17, 24, 98, 155, 159, 172, 179, 215, 251]
 FLOOR_MATERIALS = [5, 24, 35, 100, 155, 159, 162, 179, 201, 251]
 
+
 class Room:
     def __init__(self, x, y, z):
         # PROPERTIES
-        width = random.randint(5, 12)       # x axis
-        height = 5                          # y axis
-        length = random.randint(5, 12)      # z axis
-        wallMaterial = WALL_MATERIALS[random.randint(0, len(WALL_MATERIALS)-1)]
+        width = random.randint(5, 12)  # x axis
+        height = 5  # y axis
+        length = random.randint(5, 12)  # z axis
+        wallMaterial = WALL_MATERIALS[random.randint(0, len(WALL_MATERIALS) - 1)]
         floorMaterial = FLOOR_MATERIALS[random.randint(0, len(WALL_MATERIALS) - 1)]
 
         # LOCATION
-        x0 = x - int(width/2)
+        x0 = x - int(width / 2)
         y0 = y
         z0 = z - int
+
 
 def buildRoom(l, h, w):
     px, py, pz = player.getPos()
 
-def find_surface(player_x, player_z):
-    player_x = int(player_x)
-    player_z = int(player_z)
-    randx = random.randint((player_x - 150), (player_x + 150))
-    randz = random.randint((player_z - 150), (player_z + 150))
+    px, py, pz = int(px), int(py), int(pz)
+    px += 2
 
-    y = 60
+    # Walls
+    mc.setBlocks(px, py, pz, px, py + h, pz + w, 45)
+    mc.setBlocks(px, py, pz, px + l, py + h, pz, 45)
+    mc.setBlocks(px + l, py, pz, px + l, py + h, pz + w, 45)
+    mc.setBlocks(px, py, pz + w, px + l, py + h, pz + w, 45)
+
+    # roof and floor
+    mc.setBlocks(px, py - 1, pz, px + l, py - 1, pz + w, 5, 0)
+    mc.setBlocks(px, py + h + 1, pz, px + l, py + h + 1, pz + w, 5, 0)
+
+
+# Pass this function and x and z and it will find the surface of the world at that horizontal location
+def find_surface_y(x, z, y=60):
+    # default y val is 60 because mc sea level is 63
     while True:
-        if mc.getBlock(randx, y, randz) == 0:
-            headRoom = True # flag that indicates whether any
-                            # blocks exist above the y value
-            for i in range(1,16):
-                if mc.getBlock(randx, y+i, randz) != 0:
+        if mc.getBlock(x, y, z) == 0:
+            headRoom = True
+            # flag that indicates whether any
+            # blocks exist above the y value
+            # to ensure the code isn't looking at a cave or something
+
+            for i in range(1, 16, 4):
+                if mc.getBlock(x, y + i, z) != 0:
                     headRoom = False
-                    y = y+i
+                    y = y + i
                     break
 
-            if headRoom == True:
+            if headRoom:
                 break
         y += 1
 
+    return [x, y, z]
 
-    return randx, y, randz
 
+# returns the coordinates of a random surface block
+def get_random_surface_block():
+    player_x, player_y, player_z = player.getPos()
+    rx = randint(int(player_x) - 300, int(player_x) + 300)
+    rz = randint(int(player_z) - 300, int(player_z) + 300)
+    return find_surface_y(rx, rz)
+
+
+def get_plot():
+    # generating random X and Z values relative to the player within a 300block radius
+
+    # randomly generated coordinates of a surface block
+    # that will be the reference and start point of the plot
+    ref_block = get_random_surface_block()
+    ref_x = ref_block[0]
+    ref_y = ref_block[1]
+    ref_z = ref_block[2]
+
+    blocks = mc.getBlocks(ref_x, ref_y, ref_z, ref_x+100, ref_y+5, ref_z+100)
+    blocks_array = []
+    for block in blocks:
+        blocks_array.append(block)
+    plot = np.array(blocks_array)
+    plot.reshape(5, 10000)
+    print(plot)
 
 if __name__ == "__main__":
     mc = Minecraft.create()
@@ -56,40 +97,6 @@ if __name__ == "__main__":
     WALL_MATERIALS = [5, 17, 24, 98, 155, 159, 172, 179, 215, 251]
     FLOOR_MATERIALS = [5, 24, 35, 100, 155, 159, 162, 179, 201, 251]
 
-
-    class Room:
-        def __init__(self, x, y, z):
-            # PROPERTIES
-            width = random.randint(5, 12)  # x axis
-            height = 5  # y axis
-            length = random.randint(5, 12)  # z axis
-            wallMaterial = WALL_MATERIALS[random.randint(0, len(WALL_MATERIALS) - 1)]
-            floorMaterial = FLOOR_MATERIALS[random.randint(0, len(WA_MATERIALS) - 1)]
-
-            # LOCATION
-            x0 = x - int(width / 2)
-            y0 = y
-            z0 = z - int
-
-
-    def buildRoom(l, h, w):
-        px, py, pz = player.getPos()
-
-        px, py, pz = int(px), int(py), int(pz)
-        px += 2
-
-        # Walls
-        mc.setBlocks(px, py, pz, px, py + h, pz + w, 45)
-        mc.setBlocks(px, py, pz, px + l, py + h, pz, 45)
-        mc.setBlocks(px + l, py, pz, px + l, py + h, pz + w, 45)
-        mc.setBlocks(px, py, pz + w, px + l, py + h, pz + w, 45)
-
-        # roof and floor
-        mc.setBlocks(px, py - 1, pz, px + l, py - 1, pz + w, 5, 0)
-        mc.setBlocks(px, py + h + 1, pz, px + l, py + h + 1, pz + w, 5, 0)
-
     px, py, pz = player.getPos()
 
-    randx, randy, randz = find_surface(px, pz)
-    print(randx, randy, randz)
-    player.setPos(randx, randy + 1, randz)
+    get_plot()
