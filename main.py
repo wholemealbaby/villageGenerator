@@ -7,7 +7,8 @@ player = mc.player
 
 WALL_MATERIALS = [5, 17, 24, 98, 155, 159, 172, 179, 215, 251]
 FLOOR_MATERIALS = [5, 24, 35, 100, 155, 159, 162, 179, 201, 251]
-INVALID_REFERENCE_BLOCKS = [0, 1, 5, 7, 8, 9, 17, 18,]
+INVALID_REFERENCE_BLOCKS = [0, 1, 5, 7, 8, 9, 17, 18, ]
+
 
 class Room:
     def __init__(self, x, y, z):
@@ -22,6 +23,7 @@ class Room:
         x0 = x - int(width / 2)
         y0 = y
         z0 = z - int
+
 
 
 def buildRoom(l, h, w):
@@ -41,7 +43,6 @@ def buildRoom(l, h, w):
     mc.setBlocks(px, py + h + 1, pz, px + l, py + h + 1, pz + w, 5, 0)
 
 def find_plot_reference_block():
-
     # List of blocks that aren't acceptable to build a village on
     block_coords = get_random_surface_block()
     block = mc.getBlock(block_coords[0], block_coords[1], block_coords[2])
@@ -51,6 +52,7 @@ def find_plot_reference_block():
         block = mc.getBlock(block_coords[0], block_coords[1], block_coords[2])
 
     return block_coords
+
 
 # Pass this function and x and z and it will find the surface of the world at that horizontal location
 def find_surface_y(x, z, y=60):
@@ -82,14 +84,29 @@ def get_random_surface_block():
     rz = randint(int(player_z) - 3000, int(player_z) + 3000)
     return find_surface_y(rx, rz)
 
+
 def count_blocks(blocks):
     block_counts = {}
     for block in blocks:
-            if block in block_counts:
-                block_counts[block] += 1
-            else:
-                block_counts[block] = 1
+        if block in block_counts:
+            block_counts[block] += 1
+        else:
+            block_counts[block] = 1
     return block_counts
+
+
+# performs mc.getBlocks with coordinates in arrays for ease
+def getBlocks_from_tuple(mc, tup1, tup2):
+    mc.getBlocks(tup1[0], tup1[1], tup1[2], tup2[0], tup2[1], tup2[2])
+
+# performs
+def setBlocks_from_tuple(mc, tup1, tup2, id, dataid=0):
+    mc.setBlocks(tup1[0], tup1[1], tup1[2], tup2[0], tup2[1], tup2[2], id, dataid)
+
+
+def get_blocks_info(x0, y0, z0, x1, y1, z1):
+    block_map = mc.getBlocks(x0, y0, z0, )
+
 
 def cut_plot():
     # generating random X and Z values relative to the player within a 300block radius
@@ -117,8 +134,7 @@ def cut_plot():
             ref_z = ref_block[2]
             continue
 
-
-        blocks = mc.getBlocks(ref_x, ref_y-y_offset, ref_z, ref_x+100, ref_y-y_offset, ref_z+100)
+        blocks = mc.getBlocks(ref_x, ref_y - y_offset, ref_z, ref_x + 100, ref_y - y_offset, ref_z + 100)
         for block in blocks:
             found_valid_plot = True
 
@@ -127,18 +143,16 @@ def cut_plot():
                 found_valid_plot = False
                 print("Not a valid base, invalid plot")
                 break
-        y_offset +=1
+        y_offset += 1
+
+    mc.setBlocks(ref_x, ref_y - y_offset, ref_z, ref_x + 100, ref_y, ref_z + 100, 2)
+    mc.setBlocks(ref_x, (ref_y + 1 - y_offset), ref_z, ref_x + 100, ref_y + 20, ref_z + 100, 0)
+    player.setPos(ref_x, ref_y + 1 - y_offset, ref_z)
 
 
-
-    mc.setBlocks(ref_x, ref_y-y_offset, ref_z, ref_x + 100, ref_y, ref_z + 100, 2)
-    mc.setBlocks(ref_x, (ref_y+1-y_offset), ref_z, ref_x+100, ref_y+20, ref_z+100, 0)
-    player.setPos(ref_x, ref_y+1-y_offset, ref_z)
-
-
-#not functional
+# not functional
 def stop_waterfalls(ref_block):
-    boundary_ref_block = [(ref_block[0]-1), ref_block[1]+1, (ref_block[2]-1)]
+    boundary_ref_block = [(ref_block[0] - 1), ref_block[1] + 1, (ref_block[2] - 1)]
     boundary_ref_x = boundary_ref_block[0]
     boundary_ref_y = boundary_ref_block[1]
     boundary_ref_z = boundary_ref_block[2]
@@ -153,9 +167,11 @@ def stop_waterfalls(ref_block):
     blocks.reshape(102, 102)
     print(blocks)
 
+
 # Returns map of block id's from 1 outside and 1 block above plot surface
 def get_boundary_blocks(boundary_ref_x, boundary_ref_y, boundary_ref_z):
-    return mc.getBlocks(boundary_ref_x, boundary_ref_y, boundary_ref_z, boundary_ref_x + 102, boundary_ref_y, boundary_ref_z + 102)
+    return mc.getBlocks(boundary_ref_x, boundary_ref_y, boundary_ref_z, boundary_ref_x + 102, boundary_ref_y,
+                        boundary_ref_z + 102)
 
 
 if __name__ == "__main__":
