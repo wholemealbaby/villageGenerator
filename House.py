@@ -86,3 +86,4 @@ class House:
         elif bearing == 'west':
             z -= 10
         self.generate_block(bearing, x, y, z, 2, 2, 1, 20)
+

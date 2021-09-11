@@ -1,6 +1,7 @@
 from mcpi.minecraft import Minecraft
 from random import randint
 import numpy as np
+from math import fabs
 
 mc = Minecraft.create()
 player = mc.player
@@ -25,7 +26,6 @@ class Room:
         z0 = z - int
 
 
-
 def buildRoom(l, h, w):
     px, py, pz = player.getPos()
 
@@ -41,6 +41,7 @@ def buildRoom(l, h, w):
     # roof and floor
     mc.setBlocks(px, py - 1, pz, px + l, py - 1, pz + w, 5, 0)
     mc.setBlocks(px, py + h + 1, pz, px + l, py + h + 1, pz + w, 5, 0)
+
 
 def find_plot_reference_block():
     # List of blocks that aren't acceptable to build a village on
@@ -99,13 +100,60 @@ def count_blocks(blocks):
 def getBlocks_from_tuple(mc, tup1, tup2):
     mc.getBlocks(tup1[0], tup1[1], tup1[2], tup2[0], tup2[1], tup2[2])
 
+
 # performs
 def setBlocks_from_tuple(mc, tup1, tup2, id, dataid=0):
     mc.setBlocks(tup1[0], tup1[1], tup1[2], tup2[0], tup2[1], tup2[2], id, dataid)
 
 
+# returns lowest of 2 variables
+def get_lo(a, b):
+    if a < b:
+        return a
+    else:
+        return b
+
+
+# returns highest of 2 variables
+def get_hi(a, b):
+    if a > b:
+        return a
+    else:
+        return b
+
+
 def get_blocks_info(x0, y0, z0, x1, y1, z1):
-    block_map = mc.getBlocks(x0, y0, z0, )
+    blocks = mc.getBlocks(x0, y0, z0, x1, y1, z1)
+    blocks = list(blocks)
+    blocks = np.array(blocks)
+
+    blocks_coords = []
+
+    # saving decimal component of coordinates to allow them to be added back
+    # onto the iterator value
+    x_decimal = x0 - int(x0)
+    y_decimal = y0 - int(y0)
+    z_decimal = z0 - int(z0)
+
+    for y in range(int(get_lo(y0, y1)), int(get_hi(y0, y1) + 1)):
+        for x in range(int(get_lo(x0, x1)), int(get_hi(x0, x1)) + 1):
+            for z in range(int(get_lo(z0, z1)), int(get_hi(z0, z1)) + 1):
+                blocks_coords.append([x + x_decimal, y + y_decimal, z + z_decimal])
+
+    x_dist = int(fabs(x0 - x1) + 1)
+    y_dist = int(fabs(y0 - y1) + 1)
+    z_dist = int(fabs(z0 - z1) + 1)
+
+    blocks_coords = np.array(blocks_coords)
+
+    blocks.reshape(x_dist * y_dist, z_dist)
+
+    blocks_info = []
+
+    for i in range(blocks.size):
+        blocks_info.append([blocks[i], blocks_coords[i]])
+
+    return np.array(blocks_info, dtype=object)
 
 
 def cut_plot():
@@ -150,24 +198,6 @@ def cut_plot():
     player.setPos(ref_x, ref_y + 1 - y_offset, ref_z)
 
 
-# not functional
-def stop_waterfalls(ref_block):
-    boundary_ref_block = [(ref_block[0] - 1), ref_block[1] + 1, (ref_block[2] - 1)]
-    boundary_ref_x = boundary_ref_block[0]
-    boundary_ref_y = boundary_ref_block[1]
-    boundary_ref_z = boundary_ref_block[2]
-
-    boundary_blocks = get_boundary_blocks(boundary_ref_x, boundary_ref_y, boundary_ref_z)
-    boundary_blocks_array = []
-
-    for i in boundary_blocks:
-        boundary_blocks_array = []
-
-    blocks = np.array(boundary_blocks_array)
-    blocks.reshape(102, 102)
-    print(blocks)
-
-
 # Returns map of block id's from 1 outside and 1 block above plot surface
 def get_boundary_blocks(boundary_ref_x, boundary_ref_y, boundary_ref_z):
     return mc.getBlocks(boundary_ref_x, boundary_ref_y, boundary_ref_z, boundary_ref_x + 102, boundary_ref_y,
@@ -183,4 +213,6 @@ if __name__ == "__main__":
 
     px, py, pz = player.getPos()
 
-    cut_plot()
+    py -= 1
+
+    print(get_blocks_info(px + 1, py, pz, px + 2, py + 1, pz))
