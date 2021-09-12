@@ -2,10 +2,12 @@ from mcpi.minecraft import Minecraft
 from random import randint
 import numpy as np
 from math import fabs
-import Plot as p
+import Plot as plot
+
 
 mc = Minecraft.create()
 player = mc.player
+
 
 if __name__ == "__main__":
     mc = Minecraft.create()

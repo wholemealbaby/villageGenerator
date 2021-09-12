@@ -1,15 +1,38 @@
 from mcpi.minecraft import Minecraft
+import random
+import Plot as plot
+import mcpi.block as b
 
+# MATERIALS
+MUSHROOM_BLOCK = 100
+HARDENED_CLAY = 159
 
-class House:
-    def __init__(self, bearing, x, y, z, width, height, length, walls, roof):
-        self.bearing = bearing
-        self.x, self.y, self.z = x, y, z
-        self.x_end, self.y_end, self.z_end = x, y, z
-        self.width = width
-        self.height = height
-        self.length = length
-        self.walls, self.roof = walls, roof
+FLOOR_MATERIALS = {b.COBBLESTONE: [0],
+                   b.WOOD_PLANKS: [0, 1, 5],
+                   b.WOOL: [0, 7, 8, 12, 14, 15],
+                   b.WOOD: [0],
+                   b.SANDSTONE: [0],
+                   b.STONE_BRICK: [0],
+                   MUSHROOM_BLOCK: [1]} # 100:1 is red mushroom block
+
+WALL_MATERIALS = {b.WOOD: [0, 1],
+                  b.STONE_BRICK: [0],
+                  b.WOOD_PLANKS: [0, 1, 5],
+                  b.BRICK_BLOCK: [0],
+                  b.NETHER_BRICK: [0],
+                  HARDENED_CLAY: [0]}
+
+class randGenHouse:
+
+    def __init__(self):
+
+        # TODO generate plot and get house coords based on plot coords
+
+        self.bearing = random.choice(['north', 'south', 'east', 'west'])
+
+        self.width = random.randint(7, 12)
+        self.height = random.randint(5, 8)
+        self.length = length(7, 12)
 
         oak = 5
         glass = 20
@@ -86,6 +109,3 @@ class House:
         elif bearing == 'west':
             z -= 10
         self.generate_block(bearing, x, y, z, 2, 2, 1, 20)
-
-
-house = House

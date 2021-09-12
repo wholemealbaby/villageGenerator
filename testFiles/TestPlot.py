@@ -49,8 +49,8 @@ def find_surface_y(x, z, y=60):
 # returns the coordinates of a random surface block
 def get_random_surface_block():
     player_x, player_y, player_z = player.getPos()
-    rx = randint(int(player_x) - 100, int(player_x) + 100)
-    rz = randint(int(player_z) - 100, int(player_z) + 100)
+    rx = randint(int(player_x) - 3000, int(player_x) + 3000)
+    rz = randint(int(player_z) - 3000, int(player_z) + 3000)
     return find_surface_y(rx, rz)
 
 
